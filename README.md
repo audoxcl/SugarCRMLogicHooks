@@ -1,0 +1,2 @@
+# SugarCRMLogicHooks
+SugarCRM Logic Hooks
