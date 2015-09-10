@@ -34,12 +34,6 @@ class OpportunitiesHooks{
 	function afterSave(&$bean, $event, $arguments=''){
 		// Create Task and Call for new Opportunities
 		$this->CreateTaskAndCallForNewOpportunity($bean);
-		
-		// Send an Email to all users within "Sales Manager" role when an Opportunity greater than certain amount change from "Qualification" to "Negotiation"
-		$this->NotifySalesManagers($bean);
-		
-		// Send data to ERP or other external app when an Opportunity change to "Closed Won"
-		$this->SendToERP($bean);
 	}
 	
 	function beforeDelete(&$bean, $event, $arguments=''){
@@ -59,7 +53,11 @@ class OpportunitiesHooks{
 	}
 	
 	function beforeSave(&$bean, $event, $arguments=''){
+		// Send an Email to all users within "Sales Manager" role when an Opportunity greater than certain amount change from "Qualification" to "Negotiation"
+		$this->NotifySalesManagers($bean);
 		
+		// Send data to ERP or other external app when an Opportunity change to "Closed Won"
+		$this->SendToERP($bean);
 	}
 	
 	function handleException(&$bean, $event, $arguments=''){
@@ -109,6 +107,8 @@ class OpportunitiesHooks{
 			$call->name = "Follow up";
 			$call->direction = "Outbound";
 			$call->status = "Planned";
+			$call->duration_hours = 0;
+			$call->duration_minutes = 15;
 			$call->date_start = $timeDate->getNow(true)->modify("+2 days")->asDb();
 			$call->parent_type = "Opportunities";
 			$call->parent_id = $bean->id;
@@ -119,15 +119,15 @@ class OpportunitiesHooks{
 	}
 	
 	function NotifySalesManagers($bean){
+		global $sugar_config;
 		$amount_limit = 1000;
-		if($bean->sales_stage === "Negotiation" && $bean->fetched_row['sales_stage'] === "Qualification" && $bean->amount >= $amount_limit){
-			SugarApplication::appendErrorMessage('You have closed and won an opportunity greater than '.$amount_limit.'.');
+		if($bean->sales_stage === "Negotiation/Review" && $bean->fetched_row['sales_stage'] === "Proposal/Price Quote" $bean->amount >= $amount_limit){
+			SugarApplication::appendErrorMessage('You have changed the opportunity '.$bean->name.' (greater than '.$amount_limit.') to Negotiation/Review.');
 			$emailsTo = array();
 			$emailSubject = "Opportunity Alert";
-			$emailBody = "The Opportunity ".$bean->name." has changed to Negotiation<br />
+			$emailBody = "The Opportunity ".$bean->name." has changed to Negotiation/Review<br />
 			You can see the opportunity here:<br />
 			<a href=\"".$sugar_config['site_url']."/index.php?module=Opportunities&action=DetailView&record=".$bean->id."\">".$bean->name."</a>";
-			
 			$role_id = "<sales-manager-role-id>";
 			$aclrole = new ACLRole();
 			if(!is_null($aclrole->retrieve($role_id))){
@@ -136,7 +136,6 @@ class OpportunitiesHooks{
 					$emailsTo[] = $user->email1;
 				}
 			}
-
 			$this->SendEmail($emailsTo, $emailSubject, $emailBody);
 		}
 	}
