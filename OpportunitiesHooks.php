@@ -121,7 +121,7 @@ class OpportunitiesHooks{
 	function NotifySalesManagers($bean){
 		global $sugar_config;
 		$amount_limit = 1000;
-		if($bean->sales_stage === "Negotiation/Review" && $bean->fetched_row['sales_stage'] === "Proposal/Price Quote" $bean->amount >= $amount_limit){
+		if($bean->sales_stage === "Negotiation/Review" && $bean->fetched_row['sales_stage'] === "Proposal/Price Quote" && $bean->amount >= $amount_limit){
 			SugarApplication::appendErrorMessage('You have changed the opportunity '.$bean->name.' (greater than '.$amount_limit.') to Negotiation/Review.');
 			$emailsTo = array();
 			$emailSubject = "Opportunity Alert";
@@ -144,10 +144,11 @@ class OpportunitiesHooks{
 		if($bean->sales_stage === "Closed Won" && ($bean->sales_stage != $bean->fetched_row['sales_stage'])){
 			$account = new Account();
 			if(!is_null($account->retrieve($bean->account_id))){
-				$url="<your-erp-rest-url>";
+				$url = "<your-erp-rest-url>";
 				$fields = array(
 					'account_id' => $account->id,
 					'account_name' => $account->name,
+					'opportunity_id' => $bean->id,
 					'opportunity_name' => $bean->name,
 					'opportunity_amount' => $bean->amount,
 				);
