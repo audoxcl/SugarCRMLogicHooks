@@ -1,4 +1,4 @@
-# SugarCRMLogicHooks
+# SugarCRM Logic Hooks Template
 
 In this example you can see a ready to use template for these Logic Hooks:
 
