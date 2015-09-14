@@ -1,6 +1,6 @@
 # SugarCRMLogicHooks
 
-In this example you can see a ready to use template for these logic hooks:
+In this example you can see a ready to use template for these Logic Hooks:
 
 * afterDelete
 * afterRelationshipAdd
