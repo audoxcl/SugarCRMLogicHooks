@@ -125,9 +125,9 @@ class OpportunitiesHooks{
 	}
 	
 	function CreateUpSellingTasks($bean){
-		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Computadores Estandar"){
+		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Basic Product/Service"){
 			$task = new Task();
-			$task->name = "Ofrecer Computadores Premium";
+			$task->name = "Offer Premium Product/Service";
 			$task->parent_type = "Opportunities";
 			$task->parent_id = $bean->id;
 			$task->assigned_user_id = $bean->assigned_user_id;
@@ -137,9 +137,9 @@ class OpportunitiesHooks{
 	}
 	
 	function CreateCrossSellingOpportunities($bean){
-		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Monitores"){
+		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Product/Service A"){
 			$opportunity = new Opportunity();
-			$opportunity->name = "Impresoras";
+			$opportunity->name = "Product/Service B";
 			$opportunity->account_id = $bean->account_id;
 			$opportunity->sales_stage = "Prospecting";
 			$opportunity->assigned_user_id = $bean->assigned_user_id;
