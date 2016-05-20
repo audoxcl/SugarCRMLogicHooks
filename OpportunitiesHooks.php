@@ -139,7 +139,7 @@ class OpportunitiesHooks{
 	function CreateCrossSellingOpportunities($bean){
 		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Monitores"){
 			$opportunity = new Opportunity();
-			$opportunity->name = "Ofrecer Impresoras";
+			$opportunity->name = "Impresoras";
 			$opportunity->account_id = $bean->account_id;
 			$opportunity->sales_stage = "Prospecting";
 			$opportunity->assigned_user_id = $bean->assigned_user_id;
