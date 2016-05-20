@@ -58,6 +58,12 @@ class OpportunitiesHooks{
 		
 		// Send data to ERP or other external app when an Opportunity change to "Closed Won"
 		$this->SendToERP($bean);
+		
+		// Create Up Selling Tasks
+		$this->CreateUpSellingTasks($bean);
+		
+		// Create Cross Selling Opportunities
+		$this->CreateCrossSellingOpportunities($bean);
 	}
 	
 	function handleException(&$bean, $event, $arguments=''){
@@ -115,6 +121,30 @@ class OpportunitiesHooks{
 			$call->assigned_user_id = $bean->assigned_user_id;
 			$call->save();
 			
+		}
+	}
+	
+	function CreateUpSellingTasks($bean){
+		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Computadores Estandar"){
+			$task = new Task();
+			$task->name = "Ofrecer Computadores Premium";
+			$task->parent_type = "Opportunities";
+			$task->parent_id = $bean->id;
+			$task->assigned_user_id = $bean->assigned_user_id;
+			$task->save();
+			SugarApplication::appendErrorMessage('You have a new Task for Up Selling Opportunity');
+		}
+	}
+	
+	function CreateCrossSellingOpportunities($bean){
+		if($bean->fetched_row['name'] !== $bean->name && $bean->name === "Monitores"){
+			$opportunity = new Opportunity();
+			$opportunity->name = "Ofrecer Impresoras";
+			$opportunity->account_id = $bean->account_id;
+			$opportunity->sales_stage = "Prospecting";
+			$opportunity->assigned_user_id = $bean->assigned_user_id;
+			$opportunity->save();
+			SugarApplication::appendErrorMessage('You have a new Opportunity for Cross Selling Opportunity');
 		}
 	}
 	
